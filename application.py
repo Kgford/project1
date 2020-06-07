@@ -30,7 +30,8 @@ def index():
     print("RowCount2 = ",db.execute("SELECT * FROM users WHERE name = :username AND password = :password",
     {"username":request.form.get("username"),"password":request.form.get("password")}).rowcount)
     if request.method == "POST":
-        if db.execute("SELECT * FROM users WHERE name = :username AND password = :password", {"username":request.form.get("username"),"password":request.form.get("password")}).rowcount == 0:
+        if db.execute("SELECT * FROM users WHERE name = :username AND password = :password",
+        {"username":request.form.get("username"),"password":request.form.get("password")}).rowcount == 0:
             return redirect(url_for('signup'))
         else:
             db.execute("UPDATE users SET last_login = :last_login WHERE name = :username AND password = :password",
@@ -41,26 +42,24 @@ def index():
             session['email'] = request.form.get("email")
             return redirect(url_for('books'))
         return render_template ("index.html",index_type="SIGNIN",UserN="User Name",PassW="Password")
-    else:      
-        return render_template ("index.html",index_type="SIGNIN",UserN="User Name",PassW="Password")
+    return render_template ("index.html",index_type="SIGNIN",UserN="User Name",PassW="Password")
     
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    if request.method == "GET":
-        return render_template ("signup.html",index_type="SIGNUP",UserN="User Name",PassW="Password")
-    elif request.method == "POST":
+    if request.method == "POST":
         timestamp = datetime.now()
         if db.execute("SELECT * FROM users WHERE name = :username AND password = :password",{"username":request.form.get("username"),"password":request.form.get("password")}).rowcount == 0:
 			# Create new user
-            db.execute("INSERT INTO users (name, password,email,created_on,last_login) VALUES (:username, :password, :email, :created_on, :last_login)",
+            db.execute("INSERT INTO users (name, password, email,created_on,last_login) VALUES (:username, :password, :email, :created_on, :last_login)",
 					    {"username": request.form.get("username"), "password": request.form.get("password"), "email": request.form.get("email"), "created_on": timestamp, "last_login": timestamp})
             db.commit()
             session['current_user'] = request.form.get("username")
             session['username'] = request.form.get("username")
             session['password'] = request.form.get("password")
             session['email'] = request.form.get("email")
-            return render_template ("signup.html",index_type="SIGNUP",UserN="User Name",PassW="Password")
-    return redirect(url_for('index'))  
+            return redirect(url_for('index'))
+        return render_template ("signup.html",index_type="SIGNUP",UserN="User Name",PassW="Password")
+    return render_template ("signup.html",index_type="SIGNUP",UserN="User Name",PassW="Password")
  
 @app.route("/books")
 def books():
