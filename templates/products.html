@@ -1,13 +1,36 @@
-{% extends "layout.html" %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+	<link rel=File-List href="index_files/filelist.xml">
+	<link rel="icon" type="image/x-icon" href="images/ats_16X16.ico">	
+	<title>Products</title>	
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Simba program main page">
+    <link href="./assets/dist/css/bootstrap.css" rel="stylesheet">
+	<link rel="stylesheet" href="styles.css">
 
-{% block title %}
-    {{ index_type }}
-{% endblock %}
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
 
-{% block body %}
- <body>
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+    <link href="jumbotron.css" rel="stylesheet">
+	</head>
+	  <body>
 	  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-info">
-	  <a class="navbar-brand" href="dashboard.html">DASHBOARD</a>
+	  <a class="navbar-brand" href="https://simbaprogram.com/">Go to Website</a>
 	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
 		<span class="navbar-toggler-icon"></span>
 	  </button>
@@ -20,25 +43,25 @@
 		  <li class="nav-item active">
 			<a class="nav-link" href="index.html">Login <span class="sr-only">(current)</span></a>
 		  </li>
-		  <li class="nav-item dropdown active">
+		  <li class="nav-item dropdown">
 			<a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Settings</a>
-			<div class="dropdown-menu" aria-labelledby="dropdown03">
+			<div class="dropdown-menu" aria-labelledby="dropdown01">
 			  <a class="dropdown-item" href="#">Company Information</a>
 			  <a class="dropdown-item" href="#">Operator</a>
 			  <a class="dropdown-item" href="#">Activation code</a>
 			  <a class="dropdown-item" href="#">Help</a>
 			</div>
 		  </li>
-		  <li class="nav-item dropdown active">
+		  <li class="nav-item dropdown">
 			<a class="nav-link dropdown-toggle" href="#" id="dropdown02" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Materials</a>
-			<div class="dropdown-menu" aria-labelledby="dropdown03">
+			<div class="dropdown-menu" aria-labelledby="dropdown02">
 			  <a class="dropdown-item" href="#">Add/Edit Materials</a>
 			  <a class="dropdown-item" href="#">Purchase Order Create </a>
 			  <a class="dropdown-item" href="#">Purchase Order Search </a>
 			  <a class="dropdown-item" href="#">Purchase Order Reconsile </a>
 			</div>
 		  </li>
-		  <li class="nav-item dropdown active">
+		  <li class="nav-item dropdown">
 			<a class="nav-link dropdown-toggle" href="#" id="dropdown03" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Product Build</a>
 			<div class="dropdown-menu" aria-labelledby="dropdown03">
 			  <a class="dropdown-item" href="#">Product Search</a>
@@ -47,31 +70,31 @@
 			  <a class="dropdown-item" href="#">Product Support</a>
 			</div>
 		  </li>
-		  <li class="nav-item dropdown active">
+		  <li class="nav-item dropdown">
 			<a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sales</a>
-			<div class="dropdown-menu" aria-labelledby="dropdown03">
+			<div class="dropdown-menu" aria-labelledby="dropdown04">
 			  <a class="dropdown-item" href="#">Cash Registor</a>
 			  <a class="dropdown-item" href="#">Invoice Builder</a>
 			  <a class="dropdown-item" href="#">Quotes</a>
-			</div>
+			  			</div>
 		  </li>
-		  <li class="nav-item dropdown active">
+		  <li class="nav-item dropdown">
 			<a class="nav-link dropdown-toggle" href="#" id="dropdown05" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Inventory</a>
-			<div class="dropdown-menu" aria-labelledby="dropdown03">
+			<div class="dropdown-menu" aria-labelledby="dropdown05">
 			  <a class="dropdown-item" href="#">User Login</a>
 			  <a class="dropdown-item" href="#">Add User</a>
 			  <a class="dropdown-item" href="#">Delete User</a>
 			</div>
 		  </li>
-		  <li class="nav-item dropdown active">
+		  <li class="nav-item dropdown">
 			<a class="nav-link dropdown-toggle" href="#" id="dropdown06" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Expences</a>
-			<div class="dropdown-menu" aria-labelledby="dropdown03">
+			<div class="dropdown-menu" aria-labelledby="dropdown06">
 			  <a class="dropdown-item" href="#">User Login</a>
 			  <a class="dropdown-item" href="#">Add User</a>
 			  <a class="dropdown-item" href="#">Delete User</a>
 			</div>
 		  </li>
-		  <li class="nav-item dropdown active">
+		  <li class="nav-item dropdown">
 			<a class="nav-link dropdown-toggle" href="#" id="dropdown07" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Reports</a>
 			<div class="dropdown-menu" aria-labelledby="dropdown03">
 			  <a class="dropdown-item" href="#">User Login</a>
@@ -89,88 +112,17 @@
 
 <main role="main">
 
-  <!-- Main jumbotron  -->
- <div class="jumbotron" >
-	<div class="container">
-	    <img src="images/image2961.png" class="img-fluid"; "max-width: 100%;" height auto" ;alt="Responsive image">
-		<img src="images/image3001.png" class="img-fluid"; "max-width: 100%;" height auto" ;alt="Responsive image">
-	    <div class="d-none d-lg-block">
-		    <p>This is a the start of the new SIMBA Pro Web Based application. It's purpose is to replace an existing Windows Based database application that I have created. I am a Windows applications developer and I would like to also become a Web applications developer. This will be my project0 submission.</p>
-	    </div>
-	</div>
- </div>
+	 <main role="main" class="container">
+  <div class="jumbotron">
+    <h1>Products is UNDER CONSTRUCTION</h1>
+    <p class="lead">This will be a fully operational database search and add. It will feature pages for Product Build. Features will added in futures projects.Bar Codes, SKU's, Product Support</p>
+     </div>
+	 
 
-  <div class="container">
-    <!-- row of columns -->
-    <div class="row">
-      <div class="col-md-4">
-        <h2>Products</h2>
-		<ol>
-			<li>Product Build</li>
-			<li>Product Pricing</li>
-			<li>SKU's and barcodes</li>
-			<li>Inventory</li>
-		</ol>
-       <p><a class="btn btn-secondary" href="products.html" role="button">Go to Products &raquo;</a></p>
-      </div>
-      <div class="col-md-4">
-        <h2>Sales</h2>
-		<ol>
-			<li>Cash Resister</li>
-			<li>Sales transations</li>
-			<li>Sales History</li>
-			<li>Product sheet.</li>
-		</ol>
-        <p><a class="btn btn-secondary" href="sales.html" role="button">Go to Sales &raquo;</a></p>
-      </div>
-	  <div class="col-md-4">
-        <h2>Marketing</h2>
-        <ol>
-			<li>Customers</li>
-			<li>Find Customers</li>
-			<li>Social Media</li>
-			<li>Traditional Media</li>
-		</ol>
-		<p><a class="btn btn-secondary" href="marketing.html" role="button">Goto Marketing &raquo;</a></p>
-      </div>
-      <div class="col-md-4">
-         <h2>Invoicing</h2>
-		 <ol>
-			<li>Invoice Items.</li>
-			<li>New Invoice</li>
-			<li>Search Invoice</li>
-			<li>Reconsile Invoice</li>
-        </ol>
-        <p><a class="btn btn-secondary" href="invoicing.html" role="button">Go to Invoicing &raquo;</a></p>
-      </div>
-	   <div class="col-md-4">
-        <h2>Reports</h2>
-		<ol>
-			<li>Expence Report</li>
-			<li>Inventory Report</li>
-			<li>Tax Report</li>
-			<li>Vendor comparison</li>
-		</ol>
-		<p><a class="btn btn-secondary" href="dashboard.html" role="button">Go to Reporst. &raquo;</a></p>
-	</div>
-	   <div class="col-md-4">
-        <h2>Expenses</h2>
-        <ol>
-			<li>Add Expense Items</li>
-			<li>Search Expenses</li>
-			<li>Reconsile Expences</li>
-        </ol>
-		<p><a class="btn btn-secondary" href="expenses.html" role="button">Go to Expenses &raquo;</a></p>
-      </div>
-	</div>
 
-    <hr>
 
-  </div> <!-- /container -->
-
+	  </div> <!-- /container -->
 </main>
-
-{% endblock %}
 
 <footer class="container">
   <p>&copy; Simba Program INC 2018-2020</p>
