@@ -20,47 +20,48 @@ Session(app)
 # Set up database
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
+count = db.execute("SELECT * FROM users WHERE name = :username", {"username": session['username']}).rowcount
+print(count)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST']) 
 def index():
     now = datetime.now()
-    #print("now = ",now)
-    timestamp = datetime.now()
-    print("timestamp = ",timestamp)
-    print("RowCount2 = ",db.execute("SELECT * FROM users WHERE name = :username AND password = :password",
-    {"username":request.form.get("username"),"password":request.form.get("password")}).rowcount)
-    if request.method == "POST":
-        if db.execute("SELECT * FROM users WHERE name = :username AND password = :password",
-        {"username":request.form.get("username"),"password":request.form.get("password")}).rowcount == 0:
-            return redirect(url_for('signup'))
+    timestamp = datetime.timestamp(now)
+	if request.methed = "GET"
+	    if session.get('current_user') is not None:
+		    return render_template ("index.html",index_type="Active User Signin",UserN=session['username'],PassW=session['password'])
         else:
-            db.execute("UPDATE users SET last_login = :last_login WHERE name = :username AND password = :password",
-            {"last_login":timestamp, "username": request.form.get("username"), "password": request.form.get("password")})
-            session['current_user'] = request.form.get("username")
-            session['username'] = request.form.get("username")
-            session['password'] = request.form.get("password")
-            session['email'] = request.form.get("email")
-            return redirect(url_for('books'))
-        return render_template ("index.html",index_type="SIGNIN",UserN="User Name",PassW="Password")
-    return render_template ("index.html",index_type="SIGNIN",UserN="User Name",PassW="Password")
-    
+            return render_template ("index.html",index_type="Signin",UserN="User Name",PassW="")
+    elif request.methed = "POST"    
+		session['current_user'] = request.form.get("username")
+		if db.execute("SELECT * FROM users WHERE name = :username", 
+		        {"username": request.form.get("username")},
+		        "AND password = :password",{"password": request.form.get("password")}).rowcount == 0:
+            return render_template ("signup.html")
+        db.execute("UPDATE users SET last_login = :last_login",{"last_login":timestamp},
+        		 " WHERE name = :username",{"username": request.form.get("username")},
+		         "AND password = :password",{"password": request.form.get("password")})
+        return redirect(url_for('books'))   
+		       
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    if request.method == "POST":
-        timestamp = datetime.now()
-        if db.execute("SELECT * FROM users WHERE name = :username AND password = :password",{"username":request.form.get("username"),"password":request.form.get("password")}).rowcount == 0:
+    if request.methed = "GET":
+        return render_template("error.html", message="Please attempt signin first.")
+    elif request.methed = "GET":
+        now = datetime.now()
+        timestamp = datetime.timestamp(now)
+        if db.execute("SELECT * FROM users WHERE name = :username",{"username":request.form.get("username")}).rowcount == 0:
 			# Create new user
-            db.execute("INSERT INTO users (name, password, email,created_on,last_login) VALUES (:username, :password, :email, :created_on, :last_login)",
-					    {"username": request.form.get("username"), "password": request.form.get("password"), "email": request.form.get("email"), "created_on": timestamp, "last_login": timestamp})
+            db.execute("INSERT INTO users (name, password,email,created_on,last_login) VALUES (:username, :password, :email, :created_on, :last_login)",
+					    {"username": username, "password": password, "email": email, "created_on": timestamp, "last_login": timestamp})
             db.commit()
             session['current_user'] = request.form.get("username")
             session['username'] = request.form.get("username")
             session['password'] = request.form.get("password")
             session['email'] = request.form.get("email")
-            return redirect(url_for('index'))
-        return render_template ("signup.html",index_type="SIGNUP",UserN="User Name",PassW="Password")
-    return render_template ("signup.html",index_type="SIGNUP",UserN="User Name",PassW="Password")
- 
+            return render_template ("signup.html")
+    return redirect(url_for('index'))
+   
 @app.route("/books")
 def books():
     book = db.execute("SELECT * FROM books").fetchall()
@@ -75,12 +76,12 @@ def logout():
    session.pop('password', None)
    session.pop('email', None)
    return redirect(url_for('index'))
-
-
+ 
 """
 @app.route("/api/books/<int:book_id>")
 def flight_api(book_id):
-   
+    """Return details about a single book."""
+
     # Make sure flight exists.
     book = Flight.query.get(flight_id)
     if book is None:
