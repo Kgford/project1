@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script type="text/javascript">
+  window.onload = function () {
+var chart = new CanvasJS.Chart("chartContainer", {
+	animationEnabled: true,
+	
+	title:{
+		text:"Fortune 500 Companies by Country"
+	},
+	axisX:{
+		interval: 1
+	},
+	axisY2:{
+		interlacedColor: "rgba(1,77,101,.2)",
+		gridColor: "rgba(1,77,101,.1)",
+		title: "Number of Companies"
+	},
+	data: [{
+		type: "bar",
+		name: "Rating Details",
+		axisYType: "secondary",
+		color: "#014D65",
+		dataPoints: [
+			{ y: myJSON.books[0].ratings_count, label: "ratings_count" },
+			{ y: myJSON.books[0].reviews_count, label: "reviews_count" },
+			{ y: myJSON.books[0].text_reviews_count, label: "text_reviews_count" },
+			{ y: myJSON.books[0].work_ratings_count, label: "work_ratings_count" },
+			{ y: myJSON.books[0].work_reviews_count, label: "work_reviews_count" },
+			{ y: myJSON.books[0].work_text_reviews_count, label: "work_text_reviews_count" },
+			{ y: myJSON.books[0].average_rating, label: "average_rating" },
+			{ y: myJSON.books[0].average_score, label: "average_score" }
+		]
+	}]
+});
+chart.render();
+ 
+}                                
+  </script>
+  <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+</head>
+
+{% block body %}
+    <h1>Flight Details</h1>
+
+    <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+
+    <h2>Passengers</h2>
+    <ul>
+        {% for passenger in passengers %}
+            <li>{{ passenger.name }}</li>
+        {% else %}
+            <li>No passengers.</li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

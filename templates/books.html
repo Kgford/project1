@@ -1,101 +1,65 @@
-{% extends "layout.html" %}
+{% extends "books_layout.html" %}
 
 {% block title %}
     {{ index_type }}
 {% endblock %}
 
-{% block body %
-  <body>
+{% block body %}
+<body>
     <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-  <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">Book Repository</a>
-  <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
-  <ul class="navbar-nav px-3">
-    <li class="nav-item text-nowrap">
-      <a class="nav-link" href="#">Sign out</a>
-    </li>
-  </ul>
-</nav>
-
-<div class="container-fluid">
-  <div class="row">
-    <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-      <div class="sidebar-sticky pt-3">
-        <ul class="nav flex-column">
-          <li class="nav-item">
-            <a class="nav-link active" href="#">
-              <span data-feather="home"></span>
-              Dashboard <span class="sr-only">(current)</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span data-feather="file"></span>
-              books
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span data-feather="users"></span>
-              Book Reviews
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span data-feather="bar-chart-2"></span>
-              Book Stats
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span data-feather="layers"></span>
-              Integrations
-            </a>
-          </li>
-        </ul>
-      </div>
+		<a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">Book Repository</a>
+		<button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+		  <span class="navbar-toggler-icon"></span>
+		</button>
+		<input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+		<ul class="navbar-nav px-3">
+		  <li class="nav-item text-nowrap">
+			<a class="nav-link" href="{{ url_for('logout')}}">Sign out</a>
+		  </li>
+		</ul>
     </nav>
 
-        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-          <span>Saved reports</span>
-          <a class="d-flex align-items-center text-muted" href="#" aria-label="Add a new report">
-            <span data-feather="plus-circle"></span>
-          </a>
-        </h6>
-        <ul class="nav flex-column mb-2">
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span data-feather="file-text"></span>
-              Current month
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span data-feather="file-text"></span>
-              Last quarter
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span data-feather="file-text"></span>
-              Social engagement
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span data-feather="file-text"></span>
-              Year-end sale
-            </a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-
+	<div class="container-fluid">
+	  <div class="row">
+		<nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+		  <div class="sidebar-sticky pt-3">
+			<ul class="nav flex-column">
+			  <li class="nav-item">
+				<a class="nav-link active" href="#">
+				  <span data-feather="home"></span>
+				  Dashboard <span class="sr-only">(current)</span>
+				</a>
+			  </li>
+			  <li class="nav-item">
+				<a class="nav-link" href="#">
+				  <span data-feather="file"></span>
+				  books
+				</a>
+			  </li>
+			  <li class="nav-item">
+				<a class="nav-link" href="#">
+				  <span data-feather="users"></span>
+				  Book Reviews
+				</a>
+			  </li>
+			  <li class="nav-item">
+				<a class="nav-link" href="#">
+				  <span data-feather="bar-chart-2"></span>
+				  Book Stats
+				</a>
+			  </li>
+			  <li class="nav-item">
+				<a class="nav-link" href="#">
+				  <span data-feather="layers"></span>
+				  Integrations
+				</a>
+			  </li>
+			</ul>
+		  </div>
+		</nav>
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
       <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Dashboard</h1>
+        <h1 class="h2">Book Search</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
           <div class="btn-group mr-2">
             <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
@@ -103,14 +67,24 @@
           </div>
           <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
             <span data-feather="calendar"></span>
-            This week
+            ISBN  
+          </button>
+		  <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+            <span data-feather="calendar"></span>
+            Title  
+          </button>
+		  <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+            <span data-feather="calendar"></span>
+            Author  
+          </button>
+		  <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+            <span data-feather="calendar"></span>
+            Year  
           </button>
         </div>
       </div>
 
-      <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
-
-      <h2>Section title</h2>
+      <h2>BOOKS</h2>
       <div class="table-responsive">
         <table class="table table-striped table-sm">
           <thead>
@@ -122,24 +96,31 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-				{% for book in books %}
+          {% for active_book in book_list %}
+		  <tr>
 				<td>
-					<a href="{{ url_for('book', book_id_id=book.id) }}">
-						{{ book.isdn }}}
-					</a>
-					<a href="{{ url_for('book', book_id_id=book.id) }}">
-						{{ book.title }}}
-					</a>
-					<a href="{{ url_for('book', book_id_id=book.id) }}">
-						{{ book.author }}}
-					</a>
-					<a href="{{ url_for('book', book_id_id=book.id) }}">
-						{{ book.year }}}
+					<a href="{{ url_for('book', book_id=active_book.id) }}">
+						{{ active_book.isbn }}
 					</a>
 				</td>
-			  {% endfor %}
-            </tr>
+				<td>
+					<a href="{{ url_for('book', book_id=active_book.id) }}">
+						{{ active_book.title }}
+					</a>
+				</td>
+				<td>
+					<a href="{{ url_for('book', book_id=active_book.id) }}">
+						{{ active_book.author }}
+					</a>
+				</td>
+				<td>	
+					<a href="{{ url_for('book', book_id=active_book.id) }}">
+						{{ active_book.year }}
+					</a>
+				</td>
+				<td>
+			</tr>
+		  {% endfor %}
           </tbody>
         </table>
       </div>
@@ -147,8 +128,12 @@
   </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-      <script>window.jQuery || document.write('<script src="../assets/js/vendor/jquery.slim.min.js"><\/script>')</script><script src="../assets/dist/js/bootstrap.bundle.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
-        <script src="dashboard.js"></script></body>
+<script>window.jQuery || document.write('<script src="{{ url_for('static', filename='assets/js/bootstrap.bundle.js')}}"><\/script>')</script>
+<script src="{{ url_for('static', filename='assets/js/bootstrap.bundle.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+<script src="{{ url_for('static', filename='assets/js/dashboard.js')}}""></script>
+</body>
+{% endblock %}
+
 </html>

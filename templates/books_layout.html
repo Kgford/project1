@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-	<!doctype html>
 <html lang="en">
   <head>
-    meta charset="utf-8">
+    <meta charset="utf-8">
 	<link rel=File-List href="index_files/filelist.xml">
 	<link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/ats_16X16.ico') }}">	
 	<title>SIMBA Books</title>	
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Simba program main page">
+    <meta name="description" content="All books page">
     <link rel="canonical" href="https://getbootstrap.com/docs/4.5/examples/dashboard/">
-
-    <style>
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/bootstrap.css') }}">
+   
+   <style>
       .bd-placeholder-img {
         font-size: 1.125rem;
         text-anchor: middle;
@@ -26,13 +27,10 @@
         }
       }
     </style>
-    <link rel="stylesheet" href="{{ url_for('static', filename='assets/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/dashboard.css') }}">
   </head>
     <body>
-        <h1>{% block heading %}{% endblock %}</h1>
         {% block body %}
         {% endblock %}
-		{% block footer %}
-		{% endblock %}
-    </body>
+	</body>
 </html>
