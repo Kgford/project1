@@ -1,58 +1,96 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-<script type="text/javascript">
-  window.onload = function () {
-var chart = new CanvasJS.Chart("chartContainer", {
-	animationEnabled: true,
-	
-	title:{
-		text:"Fortune 500 Companies by Country"
-	},
-	axisX:{
-		interval: 1
-	},
-	axisY2:{
-		interlacedColor: "rgba(1,77,101,.2)",
-		gridColor: "rgba(1,77,101,.1)",
-		title: "Number of Companies"
-	},
-	data: [{
-		type: "bar",
-		name: "Rating Details",
-		axisYType: "secondary",
-		color: "#014D65",
-		dataPoints: [
-			{ y: myJSON.books[0].ratings_count, label: "ratings_count" },
-			{ y: myJSON.books[0].reviews_count, label: "reviews_count" },
-			{ y: myJSON.books[0].text_reviews_count, label: "text_reviews_count" },
-			{ y: myJSON.books[0].work_ratings_count, label: "work_ratings_count" },
-			{ y: myJSON.books[0].work_reviews_count, label: "work_reviews_count" },
-			{ y: myJSON.books[0].work_text_reviews_count, label: "work_text_reviews_count" },
-			{ y: myJSON.books[0].average_rating, label: "average_rating" },
-			{ y: myJSON.books[0].average_score, label: "average_score" }
-		]
-	}]
-});
-chart.render();
- 
-}                                
-  </script>
-  <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-</head>
+{% extends "books_layout.html" %}
+
+{% block title %}
+    {{ index_type }}
+{% endblock %}
 
 {% block body %}
-    <h1>Flight Details</h1>
-
-    <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
-
-    <h2>Passengers</h2>
-    <ul>
-        {% for passenger in passengers %}
-            <li>{{ passenger.name }}</li>
-        {% else %}
-            <li>No passengers.</li>
-        {% endfor %}
-    </ul>
-
+<body>
+    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+		<a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">Book Repository</a>
+		<button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+		  <span class="navbar-toggler-icon"></span>
+		</button>
+		<input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+		<ul class="navbar-nav px-3">
+		  <li class="nav-item text-nowrap">
+			<a class="nav-link" href="{{ url_for('logout')}}">Sign out</a>
+		  </li>
+		</ul>
+    </nav>
+	<div class="container-fluid">
+	  <div class="row">
+		<nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+		  <div class="sidebar-sticky pt-3">
+			<ul class="nav flex-column">
+			    <li class="nav-item">
+					<a class="nav-link active" href="#">
+					  <span data-feather="home"></span>
+					  Dashboard <span class="sr-only">(current)</span>
+					</a>
+			    </li>
+				  <li class="nav-item">
+					<a class="nav-link" href="#">
+					  <span data-feather="file"></span>
+					  books
+					</a>
+				  </li>
+				  <li class="nav-item">
+					<a class="nav-link" href="#">
+					  <span data-feather="users"></span>
+					  Book Reviews
+					</a>
+				  </li>
+				  <li class="nav-item">
+					<a class="nav-link" href="#">
+					  <span data-feather="bar-chart-2"></span>
+					  Book Stats
+					</a>
+				  </li>
+				  <li class="nav-item">
+					<a class="nav-link" href="#">
+					  <span data-feather="layers"></span>
+					  Integrations
+					</a>
+				  </li>
+				</ul>
+			  </div>
+			</nav>
+		
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+			<hr class="featurette-divider">
+			<div class="row featurette">
+			  <div class="col-md-7">
+				<h1 class="display-4 font-italic">{{book.title}}</h1>
+				<p class="lead">Ratings supplied by:  https://www.goodreads.com/book/review_counts.json.  To get these ratings us must signup and acquire a Key.</p>
+			  </div>
+			  <div class="col-md-5">
+			    <div id="reviewChart" style="height: 300px; width: 500px;">
+			  </div>
+			</div>
+			<hr class="featurette-divider">
+			
+			<div class="jumbotron p-4 p-md-5 text-black rounded bg-light">
+				<div class="col-md-6 px-0">
+				   <h1 class="display-4 font-italic">Local Reviews</h1>
+				   {% if review == 'No Review' %}
+					   <p class="lead my-3">{{title}}<span class="text-muted"><p class="lead my-1">No Review available yet</p></p>
+					   <button type="button" class="btn btn-success" onclick='do_something()'>Add a review</button>
+					   <p class="lead mb-0"><a href="#" class="text-white font-weight-bold">Back to Books</a></p>
+				   {% else %}
+					   <p class="lead my-1">Reviewer: {{reviewer}}<span class="text-muted"></p>
+					   <p class="lead my-1">Review: {{review}}</p>
+					   <p class="lead mb-0"><a href="#" class="text-white font-weight-bold">Back to Books</a></p>
+				   {% endif %}
+				</div>
+			 </div>
+		</main>
+	  </div>
+	</div>
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+	<script type="text/javascript"src="{{ url_for('static', filename='assets/js/book_stats.js')}}"></script>
+	<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+</body>
 {% endblock %}

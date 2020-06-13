@@ -1,6 +1,7 @@
 import os
 import csv
 import requests 
+import json
 import sys
 from datetime import datetime
 from flask import Flask, render_template, redirect, url_for, request, session, jsonify
@@ -43,7 +44,7 @@ def index():
             session['username'] = request.form.get("username")
             session['password'] = request.form.get("password")
             session['email'] = request.form.get("email")
-			session['user_id'] = db.execute("SELECT * FROM users WHERE name = :name", {"name": request.form.get("username")}).fetchone()
+            session['user_id'] = db.execute("SELECT * FROM users WHERE name = :name", {"name": request.form.get("username")}).fetchone()
             return redirect(url_for('books'))
         return render_template ("index.html",index_type="SIGNIN",UserN="User Name",PassW="Password")
     return render_template ("index.html",index_type="SIGNIN",UserN="User Name",PassW="Password")
@@ -61,7 +62,7 @@ def signup():
             session['username'] = request.form.get("username")
             session['password'] = request.form.get("password")
             session['email'] = request.form.get("email")
-			session['user_id'] = db.execute("SELECT * FROM users WHERE name = :name", {"name": request.form.get("username")}).fetchone()
+            session['user_id'] = db.execute("SELECT * FROM users WHERE name = :name", {"name": request.form.get("username")}).fetchone()
             return redirect(url_for('index'))
         return render_template ("signup.html",index_type="SIGNUP",UserN="User Name",PassW="Password")
     return render_template ("signup.html",index_type="SIGNUP",UserN="User Name",PassW="Password")
@@ -87,38 +88,48 @@ def book(book_id):
     """Lists details about a single flight."""
     if db.execute("SELECT * FROM books WHERE id = :id", {"id": book_id}).rowcount == 0:
         return jsonify({"error": "Invalid book_id"}), 422
-        
-    book = db.execute("SELECT * FROM books WHERE id = :id", {"id": book_id}).fetchone()
-    print(book)
-    # get book stats from API.
-    resp = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "UE95aOMmNDw2qGQ8eSZKQ", "isbns": book.isbn})
-    myJSON = resp.json()
-    return render_template("book.html", myJSON=myJSON)
-	
     
+    book = db.execute("SELECT * FROM books WHERE id = :id", {"id": book_id}).fetchone()
+    # get book stats from API.
+    resp = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "1utQKMYrlMKe3YJxQoXyeg", "isbns": book.isbn})
+    if resp == "Response [404]>":
+       return jsonify({"error": "Goodreads no longer supports this book"}), 422
+    
+    print(resp)
+    myJSON = resp.json()
+    myDICT = myJSON["books"]
+    if db.execute("SELECT * FROM reviews WHERE books_id = :books_id", {"books_id": book.id}).rowcount == 0:
+        review = 'No Review'
+        reviewer = 'No Review'
+    else:
+        reviews = db.execute("SELECT * FROM reviews WHERE books_id = :books_id", {"books_id": book.id}).fetchone()
+        review=reviews.review
+        reviewer=reviews.reviewer
+    return render_template("book.html", myDICT=myDICT, book=book, review=review, reviewer=reviewer)
+	
 	
 @app.route("/api/books/<int:book_id>")
-def flight_api(book_id):
+def book_api(book_id):
     """Return details about a single book."""
     if db.execute("SELECT * FROM books WHERE id = :id", {"id": book_id}).rowcount == 0:
         return jsonify({"error": "Invalid book_id"}), 422
     
     book = db.execute("SELECT * FROM books WHERE id = :id", {"id": book_id}).fetchone()
-    print(book)
-    resp = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "UE95aOMmNDw2qGQ8eSZKQ", "isbns": book.isbn})
+    resp = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "1utQKMYrlMKe3YJxQoXyeg", "isbns": book.isbn})
+    print(resp)
     myJSON = resp.json()
+    myDICT = myJSON["books"]
     return jsonify({
         "title": book.title,
         "author": book.author,
         "year": book.year,
 		"isbn": book.isbn,
-		"isbn13": myJSON.books[0].isbn13,
-		"ratings_count": myJSON.books[0].ratings_count,
-		"reviews_count": myJSON.books[0].reviews_count,
-		"text_reviews_count": myJSON.books[0].text_reviews_count,
-		"work_ratings_count": myJSON.books[0].work_ratings_count,
-		"work_reviews_count": myJSON.books[0].work_reviews_count,
-		"work_text_reviews_count": myJSON.books[0].work_text_reviews_count,
-		"average_rating": myJSON.books[0].average_rating,
-        "average_score": myJSON.books[0].average_score"
-	}) 
+		"isbn13": myDICT[0]["isbn13"],
+		"ratings_count": myDICT[0]["ratings_count"],
+		"reviews_count": myDICT[0]["reviews_count"],
+		"text_reviews_count": myDICT[0]["text_reviews_count"],
+		"work_ratings_count": myDICT[0]["work_ratings_count"],
+		"work_reviews_count": myDICT[0]["work_reviews_count"],
+		"work_text_reviews_count": myDICT[0]["work_text_reviews_count"],
+		"average_rating": myDICT[0]["average_rating"]
+    }) 
