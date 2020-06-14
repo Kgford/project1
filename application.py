@@ -8,6 +8,7 @@ from flask import Flask, render_template, redirect, url_for, request, session, j
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+from flask_socketio import SocketIO, emit
 
 # Check for environment variable
 if not os.getenv("DATABASE_URL"):
@@ -19,11 +20,12 @@ app.secret_key = "OCML3BRawWEUeaxcuKHLpw"
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
+socketio = SocketIO(app)
+reviews = {"reviewer": "","review_date": "", "review": ""}
 
 # Set up database
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
-
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -48,7 +50,8 @@ def index():
             return redirect(url_for('books'))
         return render_template ("index.html",index_type="SIGNIN",UserN="User Name",PassW="Password")
     return render_template ("index.html",index_type="SIGNIN",UserN="User Name",PassW="Password")
-    
+  
+  
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == "POST":
@@ -67,6 +70,7 @@ def signup():
         return render_template ("signup.html",index_type="SIGNUP",UserN="User Name",PassW="Password")
     return render_template ("signup.html",index_type="SIGNUP",UserN="User Name",PassW="Password")
  
+ 
 @app.route('/logout')
 def logout():
    # remove the user from the session if it is there
@@ -83,9 +87,10 @@ def books():
     book_list = db.execute("SELECT * FROM books").fetchall()
     return render_template("books.html", book_list=book_list)
 
+
 @app.route("/book/<int:book_id>")
 def book(book_id):
-    """Lists details about a single flight."""
+    """Lists details about a single book."""
     if db.execute("SELECT * FROM books WHERE id = :id", {"id": book_id}).rowcount == 0:
         return jsonify({"error": "Invalid book_id"}), 422
     
@@ -106,7 +111,38 @@ def book(book_id):
         review=reviews.review
         reviewer=reviews.reviewer
     return render_template("book.html", myDICT=myDICT, book=book, review=review, reviewer=reviewer)
-	
+ 
+ 
+@app.route("/review/<int:book_id>")
+def review(book_id):
+    """add review to a single book."""
+    if db.execute("SELECT * FROM books WHERE id = :id", {"id": book_id}).rowcount == 0:
+        return jsonify({"error": "Invalid book_id"}), 422
+    
+    book = db.execute("SELECT * FROM books WHERE id = :id", {"id": book_id}).fetchone()
+    return render_template("review.html", book=book)
+
+
+@socketio.on("reviews")
+def submit(data):
+    now = datetime.now()
+    timestamp = datetime.now()
+    book_id = data["book_id"]
+    print(book_id)
+    if db.execute("SELECT * FROM books WHERE id = :id", {"id": book_id}).rowcount == 0:
+        return jsonify({"error": "Invalid book_id"}), 422
+    
+    book = db.execute("SELECT * FROM books WHERE id = :id", {"id": book_id}).fetchone()
+    db.execute("INSERT INTO review (reviewer, review_date, review) VALUES (:reviewer, :review_date, :review)", {"reviewer": session.get('username'), "review_date":timestamp, "author": book.author, "review":request.form['text']})
+    
+    review = db.execute("SELECT name FROM reviews WHERE books_id = :books_id",
+                            {"books_id": book_id}).fetchall()    
+    print(review)    
+    emit("submit review", review, broadcast=True)   
+    
+    
+    
+    
 	
 @app.route("/api/books/<int:book_id>")
 def book_api(book_id):

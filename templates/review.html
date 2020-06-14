@@ -30,7 +30,7 @@
 					</a>
 			    </li>
 				  <li class="nav-item">
-					<a class="nav-link" href="{{url_for('books')}}">
+					<a class="nav-link" href="#">
 					  <span data-feather="file"></span>
 					  books
 					</a>
@@ -42,9 +42,16 @@
 					</a>
 				  </li>
 				  <li class="nav-item">
-					<a class="nav-link" href="{{ url_for('review', book_id=book.id) }}">
+					<a class="nav-link" href="#">
+					  <span data-feather="bar-chart-2"></span>
+					  Book Stats
+					</a>
+				  </li>
+				  <li class="nav-item">
+				  
+					<a class="nav-link" href="#">
 					  <span data-feather="layers"></span>
-					  Add review
+					  Integrations
 					</a>
 				  </li>
 				</ul>
@@ -52,35 +59,22 @@
 			</nav>
 		
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
-			<hr class="featurette-divider">
 			<div class="row featurette">
-			  <div class="col-md-7">
-				<h1 class="display-4 font-italic">{{book.title}}</h1>
-				<p class="lead">Ratings supplied by:  https://www.goodreads.com/book/review_counts.json.  To get these ratings us must signup and acquire a Key.</p>
-			  </div>
-			  <div class="col-md-5">
-			    <div id="reviewChart" style="height: 300px; width: 600px;">
-			  </div>
-			</div>
-			<hr class="featurette-divider">
-			
-			<div class="jumbotron p-4 p-md-5 text-black rounded bg-light">
-				<div class="col-md-50 px-0">
-				   <h1 class="display-4 font-italic">Local Reviews</h1>
-				   <p class="lead my-3">{{title}}<span class="text-muted">
-					<p id = "reviewer" class="lead my-1"><span class="text-muted"></p>
-				   <p id = "review_date" class="lead my-1"><span class="text-muted"></p>
-				   <p id = "review" class="lead my-1"></p>
-				   <button type="button" class="btn btn-success" onclick="redirect(url_for('review',book_id=book.id)">Add a review</button>
+				<div class="col-md-7">
+				    <h1>Add your Review</h1>
+					<h1 class="display-4 font-italic">Book Title: {{book.title}}</h1>
 				</div>
-			 </div>
+			</div>
+			<form method="post">
+					<textarea name="text" textarea style="width: 100%; max-width: 100% height: 1000px;"></textarea>
+					<input data-review=book.title>
+			</form>
+			<button data-vote="yes">Yes</button>
 		</main>
 	  </div>
 	</div>
 	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
-	<script type="text/javascript"src="{{ url_for('static', filename='assets/js/book_stats.js')}}"></script>
-	<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 </body>
 {% endblock %}
