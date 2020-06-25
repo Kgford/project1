@@ -1,4 +1,4 @@
-{% extends "books_layout.html" %}
+ {% extends "reviews_layout.html" %}
 
 {% block title %}
     {{ index_type }}
@@ -24,57 +24,52 @@
 		  <div class="sidebar-sticky pt-3">
 			<ul class="nav flex-column">
 			    <li class="nav-item">
-					<a class="nav-link active" href="#">
+					<a class="nav-link active" href="{{url_for('books')}}">
 					  <span data-feather="home"></span>
 					  Dashboard <span class="sr-only">(current)</span>
 					</a>
 			    </li>
 				  <li class="nav-item">
-					<a class="nav-link" href="#">
+					<a class="nav-link" href="{{url_for('books')}}">
 					  <span data-feather="file"></span>
 					  books
 					</a>
 				  </li>
 				  <li class="nav-item">
-					<a class="nav-link" href="#">
+					<a class="nav-link" href="{{ url_for('book', book_id=book.id) }}">
 					  <span data-feather="users"></span>
 					  Book Reviews
 					</a>
 				  </li>
 				  <li class="nav-item">
-					<a class="nav-link" href="#">
-					  <span data-feather="bar-chart-2"></span>
-					  Book Stats
-					</a>
-				  </li>
-				  <li class="nav-item">
-				  
-					<a class="nav-link" href="#">
+					<a class="nav-link" href="{{ url_for('book', book_id=book.id) }}">
 					  <span data-feather="layers"></span>
-					  Integrations
+					  Add review
 					</a>
 				  </li>
 				</ul>
-			  </div>
-			</nav>
-		
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+			</div>
+		</nav>
+		<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
 			<div class="row featurette">
 				<div class="col-md-7">
 				    <h1>Add your Review</h1>
 					<h1 class="display-4 font-italic">Book Title: {{book.title}}</h1>
+					<var id="book">{{book}}</VAR>
 				</div>
 			</div>
-			<form method="post">
-					<textarea name="text" textarea style="width: 100%; max-width: 100% height: 1000px;"></textarea>
-					<input data-review=book.title>
-			</form>
-			<button data-vote="yes">Yes</button>
+			<form action = "{url_for('review',book_id=book.id)}" method="post">
+				<textarea name="text" value = "value1" textarea style="width: 100%; max-width: 100% height: 1000px;"></textarea>
+				<button type="button"  name='submit' value='submit' class='register'>submit</button>
+		   </form>
+		   <div class="row featurette">
+				<div id = "reviews" class="col-md-7">
+				</div>
+		   </div>
 		</main>
 	  </div>
 	</div>
 	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
 </body>
 {% endblock %}

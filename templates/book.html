@@ -1,4 +1,4 @@
-{% extends "books_layout.html" %}
+{% extends "book_layout.html" %}
 
 {% block title %}
     {{ index_type }}
@@ -24,7 +24,7 @@
 		  <div class="sidebar-sticky pt-3">
 			<ul class="nav flex-column">
 			    <li class="nav-item">
-					<a class="nav-link active" href="#">
+					<a class="nav-link active" href="{{url_for('books')}}">
 					  <span data-feather="home"></span>
 					  Dashboard <span class="sr-only">(current)</span>
 					</a>
@@ -36,44 +36,45 @@
 					</a>
 				  </li>
 				  <li class="nav-item">
-					<a class="nav-link" href="#">
+					<a class="nav-link" href="{{ url_for('book', book_id=book_id) }}">
 					  <span data-feather="users"></span>
 					  Book Reviews
 					</a>
 				  </li>
 				  <li class="nav-item">
-					<a class="nav-link" href="{{ url_for('review', book_id=book.id) }}">
+					<a class="nav-link" href="{{ url_for('book', book_id=book_id) }}">
 					  <span data-feather="layers"></span>
 					  Add review
 					</a>
 				  </li>
-				</ul>
-			  </div>
-			</nav>
-		
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+			  </ul>
+			</div>
+		</nav>
+		<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
 			<hr class="featurette-divider">
 			<div class="row featurette">
 			  <div class="col-md-7">
-				<h1 class="display-4 font-italic">{{book.title}}</h1>
-				<p class="lead">Ratings supplied by:  https://www.goodreads.com/book/review_counts.json.  To get these ratings us must signup and acquire a Key.</p>
+				<h1 id = "book_title" class="display-4 font-italic">{{book.title}}</h1>
+				<p class="lead">Ratings supplied by:  https://www.goodreads.com/book/review_counts.json.  To get these ratings you must signup and acquire a Key.</p>
 			  </div>
 			  <div class="col-md-5">
 			    <div id="reviewChart" style="height: 300px; width: 600px;">
 			  </div>
 			</div>
 			<hr class="featurette-divider">
-			
 			<div class="jumbotron p-4 p-md-5 text-black rounded bg-light">
-				<div class="col-md-50 px-0">
-				   <h1 class="display-4 font-italic">Local Reviews</h1>
-				   <p class="lead my-3">{{title}}<span class="text-muted">
-					<p id = "reviewer" class="lead my-1"><span class="text-muted"></p>
-				   <p id = "review_date" class="lead my-1"><span class="text-muted"></p>
-				   <p id = "review" class="lead my-1"></p>
-				   <button type="button" class="btn btn-success" onclick="redirect(url_for('review',book_id=book.id)">Add a review</button>
-				</div>
+			<div class="col-md-50 px-0">
+			   <h1 class="display-4 font-italic">Local Reviews</h1>
+			   <p class="lead my-3">{{title}}<span class="text-muted">
+			   <var id = "book_isbn">{{book.isbn}}</var>
+			   <p id = "reviewer" class="lead my-1"><span class="text-muted"></p>
+			   <p id = "review_date" class="lead my-1"><span class="text-muted"></p>
+			   <p id = "review" class="lead my-1"></p>
+			   <a href="{{ url_for('reviews', book_id=book.id) }}" method = "POST">
+			       <button class="btn btn-success">Add a review</button>
+			   <a>
 			 </div>
+		</div>
 		</main>
 	  </div>
 	</div>
