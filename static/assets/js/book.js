@@ -9,18 +9,22 @@ document.addEventListener('DOMContentLoaded', () => {
 			
 			// Callback function for when request is completed
 			request.onload = () =>{
-				const data = JSON.parse(request.responseText)
-				//const indata = request.responseText
-				//var data = JSON.parse(indata);
-				alert(`data = &{data['success']}`)
-				var _book = JSON.parse(data.book_list)
+				const res = JSON.parse(request.responseText)
+				indata = JSON.stringify(res)
+				_book = JSON.parse(indata)
+				sucs = JSON.stringify(_book["success"])
+				sucs = JSON.parse(sucs)
+				alert(sucs)
+				_book = JSON.stringify(_book["book_list"])
+				_book = JSON.parse(_book)
 				alert(_book)
-				alert(_book)
+							
 				
 				// Update the result div
-				if (data.success) {
+				if (sucs) {
 					// Load the entire booklist
-					for (active_book in book_list) { 
+					for (active_book in _book) { 
+					    alert(active_book)
 						var a1 = document.createElement('a');
 						a1.href = url_for('book', book_id=_book.id);
 						var node1 = document.createTextNode(_book.isbn);

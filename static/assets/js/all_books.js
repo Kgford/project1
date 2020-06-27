@@ -48,7 +48,7 @@
 					var element4 = document.getElementById("b_year");
 					element4.appendChild(a4);
 				}	
-			};
+			}
 			// Add data to send with request
 			const data = new FormData();
 			data.append("inputVal", inputVal);

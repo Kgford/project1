@@ -4,9 +4,10 @@ import requests
 import json
 import sys
 import ast
+#from models import *
 from itertools import chain
 from datetime import datetime
-from flask import Flask, render_template, redirect, url_for, request, session, jsonify
+from flask import Flask, render_template, redirect, url_for, request, session, jsonify, make_response
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -28,6 +29,11 @@ book_list = {"reviewer": "","review_date": "", "review": "","review_date": ""}
 # Set up database
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
+#app.config['SQLALCHEMY_DATABASE_URI'] =os.getenv("DATABASE_URL")
+#db2 = SQLAlchemy(app)
+#db2.create_all()
+#db2.session.commit()
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -128,11 +134,11 @@ def stats():
     
 @app.route("/searchbook", methods=["POST"])
 def search():
+    json_data = []
+    row_header = []
     select = request.form['selection']
-    print("select = ",select)
     input = request.form['inputVal']
-    print("input = ",input)
-    
+        
     # Search for books on the database. onload will have a input =="" and load everything	
     if input != "":
         book_list = db.execute("SELECT * FROM books").fetchall()
@@ -143,15 +149,14 @@ def search():
     #if db.execute("SELECT * FROM books WHERE :select LIKE input:", {"select":select,"input":input+"%"}).rowcount == 0:
        #book_list = db.execute("SELECT * FROM books WHERE 'isbn%' LIKE '123%'").fetchall()
     
-    columns = ('index','isbn', 'title','author', 'year')
-    active_key = 'books'
-    book_list_json  = to_json(book_list,columns,active_key)
-    #print(" book_list_json = ",book_list_json)
-    test = jsonify({"success": True, "book_list": book_list_json})
-    book_list =  test.json()
+    row_headers = db.execute("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'books'").fetchall()
+    row_header = [item for sublist in row_headers for item in sublist]
+    res = to_json(book_list,row_header)
+    books = json.loads(res)
+    books = json.dumps(books)
+    print(books)
     
-    print(test["book_list"])
-    return jsonify({"success": True})
+    return jsonify({"success": True, "book_list": books})
     
 @app.route("/review/<int:book_id>")
 def review(book_id):
@@ -184,6 +189,8 @@ def reviews():
 	# Get all reviews
     reviews = db.execute("SELECT * FROM reviews WHERE books_id = :books_id",
                             {"books_id": book_id}).fetchall()  
+                            
+    
    
     # create a json
     columns = ('index','reviewer', 'review_date','review', 'year')
@@ -219,31 +226,17 @@ def book_api(book_id):
 		"average_rating": myDICT[0]["average_rating"]
     }) 
     
-def to_json(list,columns,active_key):
-    """
-    Jsonify the sql alchemy query result.
-    """
-    x = 0
-    d = dict()
-    d1 = dict()
-    st = ""
-    for active_list in list:
-        d[x] = {columns[1]:active_list[1],
-        columns[2]:active_list[2],
-        columns[3]:active_list[3],
-        columns[4]:active_list[4]}
-        x +=1
-    # this only yealds on result . must fix
+def to_json(lst,columns):
+    keys = []
+    columns[0] = str(columns[0])
+    for d in lst:
+       keys.append(dict(zip(columns,d)))
+   
+    data = json.dumps(keys)
+    return data
     
-    for y in range(0, x-1):
-        if y==0:
-           st += "{" + json.dumps(d[y]) + ","
-        else:
-            st += json.dumps(d[y]) + ","
-    st += json.dumps(d[y]) + "}"	
-    
-	# don't know which is needed at this point yet string or dict
-    #print(st)
-    #d1 = json.loads(st)
-    #print(dl)
-    return st	
+
+def dec_serializer(o):
+    if isinstance(o, decimal.Decimal):
+        return float(o)
+	
