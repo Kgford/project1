@@ -153,14 +153,28 @@ def search():
     input = request.form['inputVal']
         
     # Search for books on the database. onload will have a input =="" and load everything	
-    if input != "":
+    if input == "":
         book_list = db.execute("SELECT * FROM books").fetchall()
-    else: 
-        #book_list = db.execute("SELECT * FROM books WHERE select: LIKE input:", {"select":select,"input":input+"%"}).fetchall()
-        book_list = db.execute("SELECT * FROM books WHERE 'isbn%' LIKE '3%'").fetchall()
+    else:
+        if select =="isbn":
+            book_list = db.execute("SELECT * FROM books WHERE isbn LIKE :input", {"input":input+"%"}).fetchall()
+        elif select =="author":
+            book_list = db.execute("SELECT * FROM books WHERE author LIKE :input", {"input":input+"%"}).fetchall()
+        elif select =="Title":
+            book_list = db.execute("SELECT * FROM books WHERE title LIKE :input", {"input":input+"%"}).fetchall()
+        
     # Make sure request succeeded
-    #if db.execute("SELECT * FROM books WHERE :select LIKE input:", {"select":select,"input":input+"%"}).rowcount == 0:
-       #book_list = db.execute("SELECT * FROM books WHERE 'isbn%' LIKE '123%'").fetchall()
+    if select =="isbn":
+        if db.execute("SELECT * FROM books WHERE isbn LIKE :input", {"input":input+"%"}).rowcount == 0:
+            book_list = db.execute("SELECT * FROM books").fetchall()
+    elif select =="author":
+        if db.execute("SELECT * FROM books WHERE author LIKE :input", {"input":input+"%"}).rowcount == 0:
+            book_list = db.execute("SELECT * FROM books").fetchall()
+    elif select =="Title":
+        if db.execute("SELECT * FROM books WHERE title LIKE :input", {"input":input+"%"}).rowcount == 0:
+            book_list = db.execute("SELECT * FROM books").fetchall()
+    
+    print("book_list = ", book_list)
     
     row_headers = db.execute("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'books'").fetchall()
     row_header = [item for sublist in row_headers for item in sublist]
@@ -171,8 +185,9 @@ def search():
 @app.route("/review/<int:book_id>")
 def review(book_id):
     if db.execute("SELECT * FROM books WHERE id = :id", {"id": book_id}).rowcount == 0:
-        return jsonify({"error": "Invalid book_id"}), 422
+       return jsonify({"error": "Invalid book_id"}), 422
     
+    print(("SELECT * FROM books WHERE id = :id", {"id": book_id}))
     book = db.execute("SELECT * FROM books WHERE id = :id", {"id": book_id}).fetchone()
     return render_template("review.html", book=book)
 	
@@ -181,16 +196,16 @@ def reviews():
     now = datetime.now()
     timestamp = datetime.now()
     """add review to a single book."""
-    book = request.form['book']
+    book_id = request.form['book_id']
     review = request.form['review']
-	
+       
     success = True
 	# Get a count of existing reviews
-    count = db.execute("SELECT * FROM reviews WHERE books_id = :books_id", {"books_id": book_id}).fetchall()
-    print('count = ',count)
+    #count = db.execute("SELECT * FROM reviews WHERE books_id = :books_id", {"books_id": book_id}).fetchall()
+    #print('count = ',count)
 	
-    db.execute("INSERT INTO reviews (reviewer, review_date, review,books_id) VALUES (:reviewer, :review_date, :review, :books_id)",
-    {"reviewer": session.get('username'), "review_date":timestamp, "author": book.author, "review": review, "books_id": book_id})
+    db.execute("INSERT INTO reviews (reviewer, review_date, review, books_id) VALUES (:reviewer, :review_date, :review, :books_id)",
+    {"reviewer": session.get('username'), "review_date":timestamp, "review": review, "books_id": book_id})
      
     # Check for a new review
     if db.execute("SELECT * FROM reviews WHERE books_id = :books_id", 

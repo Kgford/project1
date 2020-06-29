@@ -22,6 +22,7 @@
 					var a1 = document.createElement('a');
 					alert('al = ',a1);
 					//a1.href = url_for('book', book_id=res.book_list[num].id);
+					alert(res.book_list[num].isbn)
 					var node1 = document.createTextNode(res.book_list[num].isbn);
 					alert('nodal = ',nodel);
 					a1.appendChild(node1);
@@ -52,6 +53,13 @@
 					num++;						
 				}
 			}
+		// Add data to send with request
+		const data = new FormData();
+		data.append("inputVal", inputVal);
+		data.append('selection', selection);
+		// Send request
+		request.send(data);
+		return false;
 		};	
     });
 });

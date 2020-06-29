@@ -1,10 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
 	document.querySelectorAll('button').forEach(button => {
 		button.onclick = () => {
-			const book = document.getElementById("book").value;
+			alert("i am here in js")
+			const get_id = document.getElementById("bookvar").value
+			const book_id = parseInt(get_id.match(/\d+/),10)
 			const get_review = document.getElementById("text").value;
 			const request = new XMLHttpRequest();
-			request.open('POST', '/review');
+			request.open('POST', '/reviews');
 			
 			// Callback function for when request is completed
 			request.onload = () =>{
@@ -48,14 +50,15 @@ document.addEventListener('DOMContentLoaded', () => {
 					element4.appendChild(para);	
 				}
 			};
-			
-			// Add data to send with request
-			const data = new FormData();
-			data.append("book", book);
-			data.append("review", get_review);
-			// Send request
-			request.send(data);
-			return false;
+		};	
+		// Add data to send with request
+		const data = new FormData();
+		data.append("book_id", book_id);
+		data.append("review", get_review);
+		
+		// Send request
+		request.send(data);
+		return false;
 		};
 	});
 });
