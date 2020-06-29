@@ -93,7 +93,11 @@ def logout():
 @app.route("/books")
 def books():
     book_list = db.execute("SELECT * FROM books").fetchall()
-    return render_template("books.html", book_list=book_list)
+    row_headers = db.execute("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'books'").fetchall()
+    row_header = [item for sublist in row_headers for item in sublist]
+    res = to_json(book_list,row_header)
+    books = json.loads(res)
+    return render_template("books.html", book_list=books)
 
 @app.route("/book/<int:book_id>")
 def book(book_id):
@@ -117,19 +121,28 @@ def book(book_id):
         reviews = db.execute("SELECT * FROM reviews WHERE books_id = :books_id", {"books_id": book.id}).fetchone()
         review=reviews.review
         reviewer=reviews.reviewer
+    print(book)    
     return render_template("book.html", myDICT=myDICT, book=book, review=review, reviewer=reviewer)
  	
 @app.route("/stats", methods=["POST"])
 def stats():
-    isbn = request.form['book_isbn']
+    print('test')
+    book_id = request.form['book_id']
+    #print(isbn)
+    if db.execute("SELECT * FROM books WHERE id = :id", {"id": book_id}).rowcount == 0:
+        return jsonify({"error": "Invalid book_id"}), 422
+    
+    book = db.execute("SELECT * FROM books WHERE id = :id", {"id": book_id}).fetchone()
+    
     # get book stats from goodreads API.
-    resp = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "1utQKMYrlMKe3YJxQoXyeg", "isbns": isbn})
+    resp = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "1utQKMYrlMKe3YJxQoXyeg", "isbns": book.isbn})
     success = True
     if resp.status_code !=200:
         success = False
     
     myJSON = resp.json()
     myDICT = myJSON["books"]
+    print(myDICT)
     return jsonify({"success": success, "myDICT": myDICT})
     
 @app.route("/searchbook", methods=["POST"])
@@ -153,9 +166,6 @@ def search():
     row_header = [item for sublist in row_headers for item in sublist]
     res = to_json(book_list,row_header)
     books = json.loads(res)
-    books = json.dumps(books)
-    print(books)
-    
     return jsonify({"success": True, "book_list": books})
     
 @app.route("/review/<int:book_id>")
@@ -190,13 +200,11 @@ def reviews():
     reviews = db.execute("SELECT * FROM reviews WHERE books_id = :books_id",
                             {"books_id": book_id}).fetchall()  
                             
-    
-   
-    # create a json
-    columns = ('index','reviewer', 'review_date','review', 'year')
-    active_key = 'reviews'
-    reviews_json = to_json(reviews,columns,active_key)
-    return jsonify({"success": success, "reviews": reviews_json}) 
+    row_headers = db.execute("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'reviews'").fetchall()
+    row_header = [item for sublist in row_headers for item in sublist]
+    res = to_json(reviews,row_header)
+    rev = json.loads(res)
+    return jsonify({"success": success, "reviews": rev}) 
 	
 @app.route("/api/books/<int:book_id>")
 def book_api(book_id):
