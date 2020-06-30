@@ -13,51 +13,34 @@ document.addEventListener('DOMContentLoaded', () => {
 				indata = JSON.stringify(res)
 				_book = JSON.parse(indata)
 				sucess = JSON.stringify(_book["success"])
-				
-	             document.getElementById('b_line').innerHTML = "";
+				document.getElementById('table_id').innerHTML = "";
 				// Update the result div
 				if (sucess) {
 					// Load the entire booklist
 					var num = 0;
 					var a = "" ;
+					
 					for (active_book in res.book_list) { 
 					    book_id = res.book_list[num].id
 						isbn = res.book_list[num].isbn
 						author = res.book_list[num].author
 						title = res.book_list[num].title
 						year = res.book_list[num].year
-
-					    var tr1 = document.getElementById('b_line')
-					    var newline1 = document.createElement('a');
-						newline1.setAttribute('href', `'url_for('book', book_id=[${book_id}]'`);
-						var textnode1 = `ISBN: ${isbn}`
-						//alert(textnode);
-						var node1 = document.createTextNode(textnode1);
-						tr1.appendChild(node1);
-						
-						var tr2 = document.getElementById('b_line')
-					    var newline2 = document.createElement('a');
-						newline2.setAttribute('href', `'url_for('book', book_id=[${book_id}]'`);
-						var textnode2 = `TITLE: ${title}`
-						//alert(textnode);
-						var node2 = document.createTextNode(textnode2);
-						tr2.appendChild(node2);
-						
-						var tr3 = document.getElementById('b_line')
-					    var newline3 = document.createElement('a');
-						newline3.setAttribute('href', `'url_for('book', book_id=[${book_id}]'`);
-						var textnode3 = `AUTHOR: ${author}`
-						//alert(textnode);
-						var node3 = document.createTextNode(textnode3);
-						tr3.appendChild(node3);
-						
-						var tr4 = document.getElementById('b_line')
-					    var newline4 = document.createElement('a');
-						newline4.setAttribute('href', `'url_for('book', book_id=[${book_id}]'`);
-						var textnode4 = `YEAR: ${year}`
-						//alert(textnode);
-						var node4 = document.createTextNode(textnode4);
-						tr4.appendChild(node4);
+						var tr = document.createElement("tr");
+						var row=document.getElementById('table_id').insertRow()
+						var cell1 = row.insertCell(0)
+						var cell2 = row.insertCell(1)
+						var cell3 = row.insertCell(2)
+						var cell4 = row.insertCell(3)
+						pathArray = window.location.href;
+						pathArray = pathArray.substring(0, pathArray.lastIndexOf("/"));
+						url = `${pathArray}/book/${book_id}`
+						//alert(url)
+						// Create the text node for anchor element. 
+						cell1.innerHTML = `<a href=${url}>${isbn}</a>`;
+						cell2.innerHTML = `<a href=${url}>${author}</a>`;
+						cell3.innerHTML = `<a href=${url}>${title}</a>`;
+						cell4.innerHTML = `<a href=${url}>${year}</a>`;
 						num++;						
 					}
 				}

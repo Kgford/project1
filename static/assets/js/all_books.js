@@ -1,65 +1,55 @@
 
 (window.onload = function () {
-    document.addEventListener('DOMContentLoaded', () => {
-		const selection = "";
-		const inputVal = "";
-		const request = new XMLHttpRequest();
-		request.open('POST', '/searchbook');
-		
-		// Callback function for when request is completed
-		request.onload = () =>{
-			var res = JSON.parse(request.responseText)
-			indata = JSON.stringify(res)
-			_book = JSON.parse(indata)
-			sucess = JSON.stringify(_book["success"])
-				
-			// Update the result div
-			if (sucess) {
-				// Load the entire booklist
-				var num = 0;
-				for (active_book in res.book_list) { 
-					alert(res.book_list[num].title);
-					var a1 = document.createElement('a');
-					alert('al = ',a1);
-					//a1.href = url_for('book', book_id=res.book_list[num].id);
-					alert(res.book_list[num].isbn)
-					var node1 = document.createTextNode(res.book_list[num].isbn);
-					alert('nodal = ',nodel);
-					a1.appendChild(node1);
-					var element1 = document.getElementById("b_isbn");
-					element1.appendChild(a1);
-					alert('elementl = ',element1)
-					
-					var a2 = document.createElement('a');
-					//a2.href = url_for('book', book_id=res.book_list[num].id);
-					var node2 = document.createTextNode(res.book_list[num].title);
-					a2.appendChild(node2);
-					var element2 = document.getElementById("b_title");
-					element2.appendChild(a2);
-					
-					var a3 = document.createElement('a');
-					//a3.href = url_for('book', book_id=res.book_list[num].id);
-					var node3 = document.createTextNode(res.book_list[num].author);
-					a3.appendChild(node3);
-					var element3 = document.getElementById("b_author");
-					element3.appendChild(a3);
-					
-					var a4 = document.createElement('a');
-					//a4.href = url_for('book', book_id=res.book_list[num].id);
-					var node4 = document.createTextNode(res.book_list[num].year);
-					a4.appendChild(node4);
-					var element4 = document.getElementById("b_year");
-					element4.appendChild(a4);	
-					num++;						
-				}
+	alert('i am here')
+	const selection = button.dataset.search;
+	const inputVal = document.getElementById(`tx_${selection}`).value;
+	const request = new XMLHttpRequest();
+	request.open('POST', '/searchbook');
+			
+	// Callback function for when request is completed
+	request.onload = () =>{
+		var res = JSON.parse(request.responseText)
+		indata = JSON.stringify(res)
+		_book = JSON.parse(indata)
+		sucess = JSON.stringify(_book["success"])
+		document.getElementById('table_id').innerHTML = "";
+		// Update the result div
+		if (sucess) {
+			// Load the entire booklist
+			var num = 0;
+			var a = "" ;
+			
+			for (active_book in res.book_list) { 
+				book_id = res.book_list[num].id
+				isbn = res.book_list[num].isbn
+				author = res.book_list[num].author
+				title = res.book_list[num].title
+				year = res.book_list[num].year
+				var tr = document.createElement("tr");
+				var row=document.getElementById('table_id').insertRow()
+				var cell1 = row.insertCell(0)
+				var cell2 = row.insertCell(1)
+				var cell3 = row.insertCell(2)
+				var cell4 = row.insertCell(3)
+				pathArray = window.location.href;
+				pathArray = pathArray.substring(0, pathArray.lastIndexOf("/"));
+				url = `${pathArray}/book/${book_id}`
+				//alert(url)
+				// Create the text node for anchor element. 
+				cell1.innerHTML = `<a href=${url}>${isbn}</a>`;
+				cell2.innerHTML = `<a href=${url}>${author}</a>`;
+				cell3.innerHTML = `<a href=${url}>${title}</a>`;
+				cell4.innerHTML = `<a href=${url}>${year}</a>`;
+				num++;						
 			}
-		// Add data to send with request
-		const data = new FormData();
-		data.append("inputVal", inputVal);
-		data.append('selection', selection);
-		// Send request
-		request.send(data);
-		return false;
-		};	
-    });
+		}
+	};
+	alert(i'm here now")
+    // Add data to send with request
+	const data = new FormData();
+	data.append("inputVal", inputVal);
+	data.append('selection', selection);
+	// Send request
+	request.send(data);
+	return false;	
 });

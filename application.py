@@ -1,11 +1,11 @@
 import os
-import csv
+#import csv
 import requests 
 import json
 import sys
-import ast
+#import ast
 #from models import *
-from itertools import chain
+#from itertools import chain
 from datetime import datetime
 from flask import Flask, render_template, redirect, url_for, request, session, jsonify, make_response
 from flask_session import Session
@@ -88,15 +88,26 @@ def logout():
    session.pop('email', None)
    session.pop('user_id', None)
    return redirect(url_for('index'))
+
+@app.route('/unauthorized')
+def unauthorized():
+   # remove the user from the session if it is there
+   
+   return render_template("unauthorized.html") 
   
  
 @app.route("/books")
 def books():
-    book_list = db.execute("SELECT * FROM books").fetchall()
-    row_headers = db.execute("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'books'").fetchall()
-    row_header = [item for sublist in row_headers for item in sublist]
-    res = to_json(book_list,row_header)
-    books = json.loads(res)
+    if 'username' in session:
+        book_list = db.execute("SELECT * FROM books").fetchall()
+        row_headers = db.execute("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'books'").fetchall()
+        row_header = [item for sublist in row_headers for item in sublist]
+        res = to_json(book_list,row_header)
+        books = json.loads(res)
+    else:
+        #return redirect(url_for('unauthorized'))
+        return '<h1>Unauthorized user!   Please sign in</h1>';
+    
     return render_template("books.html", book_list=books)
 
 @app.route("/book/<int:book_id>")
@@ -150,8 +161,11 @@ def search():
     json_data = []
     row_header = []
     select = request.form['selection']
+    print(select)
     input = request.form['inputVal']
-        
+    print(input)
+    success = True    
+    books = ""
     # Search for books on the database. onload will have a input =="" and load everything	
     if input == "":
         book_list = db.execute("SELECT * FROM books").fetchall()
@@ -160,7 +174,7 @@ def search():
             book_list = db.execute("SELECT * FROM books WHERE isbn LIKE :input", {"input":input+"%"}).fetchall()
         elif select =="author":
             book_list = db.execute("SELECT * FROM books WHERE author LIKE :input", {"input":input+"%"}).fetchall()
-        elif select =="Title":
+        elif select =="title":
             book_list = db.execute("SELECT * FROM books WHERE title LIKE :input", {"input":input+"%"}).fetchall()
         
     # Make sure request succeeded
@@ -170,12 +184,10 @@ def search():
     elif select =="author":
         if db.execute("SELECT * FROM books WHERE author LIKE :input", {"input":input+"%"}).rowcount == 0:
             book_list = db.execute("SELECT * FROM books").fetchall()
-    elif select =="Title":
+    elif select =="title":
         if db.execute("SELECT * FROM books WHERE title LIKE :input", {"input":input+"%"}).rowcount == 0:
             book_list = db.execute("SELECT * FROM books").fetchall()
-    
-    print("book_list = ", book_list)
-    
+        
     row_headers = db.execute("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'books'").fetchall()
     row_header = [item for sublist in row_headers for item in sublist]
     res = to_json(book_list,row_header)
@@ -194,23 +206,28 @@ def review(book_id):
 @app.route("/reviews", methods=["POST"])
 def reviews():
     now = datetime.now()
-    timestamp = datetime.now()
+    timestamp = str(datetime.now())
+    
     """add review to a single book."""
-    book_id = request.form['book_id']
+    book_id = int(request.form['book_id'])
     review = request.form['review']
        
     success = True
-	# Get a count of existing reviews
-    #count = db.execute("SELECT * FROM reviews WHERE books_id = :books_id", {"books_id": book_id}).fetchall()
-    #print('count = ',count)
+    # Get a count of existing reviews
+    count1 = db.execute("SELECT * FROM reviews WHERE books_id = :books_id", {"books_id": book_id}).fetchall()
+    print('count1 = ',count1)
+    
 	
     db.execute("INSERT INTO reviews (reviewer, review_date, review, books_id) VALUES (:reviewer, :review_date, :review, :books_id)",
     {"reviewer": session.get('username'), "review_date":timestamp, "review": review, "books_id": book_id})
+    db.commit
      
     # Check for a new review
-    if db.execute("SELECT * FROM reviews WHERE books_id = :books_id", 
-			{"books_id": book_id}).rowcount()<=count:
+    count2 = db.execute("SELECT * FROM reviews WHERE books_id = :books_id", {"books_id": book_id}).fetchall()
+    print('count2 = ',count2)
+    if count2 <= count1:   
         success = False
+    
 	# Get all reviews
     reviews = db.execute("SELECT * FROM reviews WHERE books_id = :books_id",
                             {"books_id": book_id}).fetchall()  
@@ -219,6 +236,31 @@ def reviews():
     row_header = [item for sublist in row_headers for item in sublist]
     res = to_json(reviews,row_header)
     rev = json.loads(res)
+    print(rev)
+    return jsonify({"success": success, "reviews": rev}) 
+    
+@app.route("/all_reviews", methods=["POST"])
+def all_reviews():
+    now = datetime.now()
+    timestamp = str(datetime.now())
+    success = True
+    """add review to a single book."""
+    book_id = int(request.form['book_id'])
+           
+            
+	# Get all reviews
+    reviews = db.execute("SELECT * FROM reviews WHERE books_id = :books_id",
+                            {"books_id": book_id}).fetchall()  
+     
+    if reviews =="":
+        success = False
+        
+    print(reviews)
+    row_headers = db.execute("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'reviews'").fetchall()
+    row_header = [item for sublist in row_headers for item in sublist]
+    res = to_json(reviews,row_header)
+    rev = json.loads(res)
+    print(rev)
     return jsonify({"success": success, "reviews": rev}) 
 	
 @app.route("/api/books/<int:book_id>")
@@ -254,7 +296,7 @@ def to_json(lst,columns):
     columns[0] = str(columns[0])
     for d in lst:
        keys.append(dict(zip(columns,d)))
-   
+    
     data = json.dumps(keys)
     return data
     
@@ -262,4 +304,8 @@ def to_json(lst,columns):
 def dec_serializer(o):
     if isinstance(o, decimal.Decimal):
         return float(o)
+        
+def myconverter(o):
+    if isinstance(o, datetime.datetime):
+        return o.__str__()
 	

@@ -36,18 +36,18 @@
 					</a>
 				  </li>
 				  <li class="nav-item">
-					<a class="nav-link" href="">
+					<a class="nav-link" href="{{ url_for('logout')}}">
 					  <span data-feather="users"></span>
-					  Book Reviews
+					  Sign out
 					</a>
 				  </li>
 				  <li class="nav-item">
-					<a class="nav-link" href="">
-					  <span data-feather="layers"></span>
-					  Add review
+					<a class="nav-link" href="{{ url_for('index')}}">
+					  <span data-feather="users"></span>
+					  Sign in
 					</a>
-				 </li>
-			 </ul>
+				  </li>
+			</ul>
 		 </div>
 	 </nav>
 	 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
@@ -76,7 +76,7 @@
 	</form>
       <h2>BOOKS</h2>
       <div class="table-responsive">
-        <table class="table table-striped table-sm">
+        <table id = "table_id" class="table table-striped table-sm">
           <thead>
             <tr>
               <th>isbn</th>
